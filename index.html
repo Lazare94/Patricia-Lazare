@@ -6,21 +6,25 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
-    body {
-    font-family: Arial;
+  body {
+    font-family: Arial, sans-serif;
     text-align: center;
     padding-top: 50px;
-    background-image: url('background.jpeg'); /* ou URL externe */
+    margin: 0;
+
+    background-image: url('background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    color: white; /* Pour que le texte soit visible sur fond sombre */
+    min-height: 100vh;
+    color: white;
   }
 
   input, button {
-    padding: 8px;
+    padding: 10px;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: 6px;
+    border: none;
   }
 
   #qrcode {
@@ -28,11 +32,10 @@
   }
 
   #resultat {
+    font-size: 1.2em;
     font-weight: bold;
-    font-size: 20px;
-    margin-top: 20px;
   }
-  </style>
+</style>
 </head>
 <body>
   <h2>Entrez votre nom</h2>
