@@ -6,10 +6,32 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
-    body { font-family: Arial; text-align: center; padding-top: 50px; }
-    input { padding: 8px; width: 300px; }
-    button { padding: 8px 16px; margin-left: 10px; }
-    #qrcode { margin-top: 30px; }
+    body {
+    font-family: Arial;
+    text-align: center;
+    padding-top: 50px;
+    background-image: url('background.jpg'); /* ou URL externe */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white; /* Pour que le texte soit visible sur fond sombre */
+  }
+
+  input, button {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+  }
+
+  #qrcode {
+    margin-top: 30px;
+  }
+
+  #resultat {
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 20px;
+  }
   </style>
 </head>
 <body>
