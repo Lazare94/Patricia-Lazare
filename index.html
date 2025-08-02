@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Invités - QR Table</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; padding-top: 50px; }
+    input { padding: 8px; width: 300px; }
+    button { padding: 8px 16px; margin-left: 10px; }
+    #qrcode { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h2>Entrez votre nom</h2>
+  <input type="text" id="nom" placeholder="Ex: Jean Dupont">
+  <button onclick="trouverTable()">Trouver ma table</button>
+
+  <p id="resultat"></p>
+  <div id="qrcode"></div>
+
+  <script>
+    let invites = {};
+
+    // Charger le CSV
+    fetch('invites.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        const data = Papa.parse(csvText, { header: true }).data;
+        data.forEach(row => {
+          if (row.Nom && row.Table) {
+            invites[row.Nom.trim().toLowerCase()] = row.Table.trim();
+          }
+        });
+      })
+      .catch(error => {
+        console.error("Erreur chargement CSV :", error);
+        document.getElementById("resultat").textContent = "Erreur de chargement du fichier.";
+      });
+
+    function trouverTable() {
+      const nomInput = document.getElementById("nom").value.trim();
+      const nomCle = nomInput.toLowerCase();
+      const table = invites[nomCle];
+
+      if (table !== undefined) {
+        const message = `Nom : ${nomInput}\nTable : ${table}`;
+        document.getElementById("resultat").textContent = "Vous êtes à la table : " + table;
+
+        const qrcodeContainer = document.getElementById("qrcode");
+        qrcodeContainer.innerHTML = "";
+        QRCode.toCanvas(message, { width: 200 }, function (err, canvas) {
+          if (err) console.error(err);
+          else qrcodeContainer.appendChild(canvas);
+        });
+      } else {
+        document.getElementById("resultat").textContent = "Nom non trouvé.";
+        document.getElementById("qrcode").innerHTML = "";
+      }
+    }
+  </script>
+</body>
+</html>
