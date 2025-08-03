@@ -5,7 +5,6 @@
   <title>Plan de Table - Mariage Tchappi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
   <style>
     html, body {
@@ -89,10 +88,6 @@
       text-shadow: 1px 1px 2px black;
     }
 
-    #qrcode {
-      margin-top: 20px;
-    }
-
     @media (max-width: 600px) {
       h1 {
         font-size: 2.5rem;
@@ -107,11 +102,10 @@
   <div class="overlay">
     <h1>Bienvenue au Mariage de M. et Mme Tchappi</h1>
     <h2>Entrez votre nom pour connaître votre table</h2>
-    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi autocomplete="off">
+    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off">
     <div id="suggestions"></div>
     <button onclick="trouverTable()">Trouver ma table</button>
     <div id="resultat"></div>
-    <div id="qrcode"></div>
   </div>
 
   <script>
@@ -165,15 +159,9 @@
       const table = invites[nomKey];
 
       const resultat = document.getElementById("resultat");
-      const qrcodeContainer = document.getElementById("qrcode");
-      qrcodeContainer.innerHTML = "";
 
       if (table !== undefined) {
         resultat.textContent = `Vous êtes à la table : ${table}`;
-        const message = `Nom : ${nomSaisi}\nTable : ${table}`;
-        QRCode.toCanvas(message, { width: 200 }, function (err, canvas) {
-          if (!err) qrcodeContainer.appendChild(canvas);
-        });
       } else {
         resultat.textContent = "Nom non trouvé. Veuillez vérifier l'orthographe.";
       }
