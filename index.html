@@ -52,7 +52,15 @@
       padding: 14px;
       font-size: 1.1rem;
       border-radius: 8px;
-      border: none;
+      border: 2px solid var(--terracotta);
+      background-color: #fff7f5;
+      color: var(--terracotta);
+      outline: none;
+    }
+
+    #nom::placeholder {
+      color: var(--terracotta);
+      opacity: 0.6;
     }
 
     #suggestions {
@@ -107,7 +115,7 @@
 </head>
 <body>
   <div class="overlay">
-    <h1>Bienvenue au Mariage de M. et Mme Tchappi</h1>
+    <h1>Bienvenue au mariage de M. et Mme Tchappi</h1>
     <h2>Entrez votre nom pour connaître votre table</h2>
     <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off">
     <div id="suggestions"></div>
