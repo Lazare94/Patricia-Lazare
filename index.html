@@ -2,53 +2,83 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Mariage de Patricia et Lazare</title>
+  <title>Plan de table - QR Invités</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Librairies externes -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <!-- Styles -->
   <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding-top: 50px;
-    margin: 0;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('background.jpeg'); /* Remplace par ton image */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
 
-    background-image: url('background.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    color: white;
-  }
+    h2 {
+      margin-top: 60px;
+      font-size: 28px;
+    }
 
-  input, button {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 6px;
-    border: none;
-  }
+    input, button {
+      padding: 12px;
+      margin: 10px 5px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
 
-  #qrcode {
-    margin-top: 30px;
-  }
+    button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
 
-  #resultat {
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-</style>
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #resultat {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #qrcode {
+      margin-top: 30px;
+    }
+  </style>
 </head>
-<body>
-  <h1>Entrez votre nom</h1>
-  <input type="text" id="nom" placeholder="Ex: Jean Dupont">
-  <button onclick="trouverTable()">Trouver ma table</button>
 
-  <p id="resultat"></p>
+<body>
+  <h2>Entrez votre nom pour trouver votre table</h2>
+
+  <div>
+    <input type="text" id="nom" placeholder="Ex: Jean Dupont">
+    <button onclick="trouverTable()">Trouver ma table</button>
+  </div>
+
+  <div id="resultat"></div>
   <div id="qrcode"></div>
 
+  <!-- Script -->
   <script>
     let invites = {};
 
-    // Charger le CSV
+    // Charger le fichier CSV
     fetch('invites.csv')
       .then(response => response.text())
       .then(csvText => {
@@ -60,28 +90,28 @@
         });
       })
       .catch(error => {
-        console.error("Erreur chargement CSV :", error);
+        console.error("Erreur lors du chargement du CSV :", error);
         document.getElementById("resultat").textContent = "Erreur de chargement du fichier.";
       });
 
     function trouverTable() {
-      const nomInput = document.getElementById("nom").value.trim();
-      const nomCle = nomInput.toLowerCase();
-      const table = invites[nomCle];
+      const nomSaisi = document.getElementById("nom").value.trim().toLowerCase();
+      const table = invites[nomSaisi];
+
+      const resultat = document.getElementById("resultat");
+      const qrcodeContainer = document.getElementById("qrcode");
+      qrcodeContainer.innerHTML = "";
 
       if (table !== undefined) {
-        const message = `Nom : ${nomInput}\nTable : ${table}`;
-        document.getElementById("resultat").textContent = "Vous êtes à la table : " + table;
+        resultat.textContent = "Vous êtes à la table : " + table;
 
-        const qrcodeContainer = document.getElementById("qrcode");
-        qrcodeContainer.innerHTML = "";
+        const message = `Nom : ${document.getElementById("nom").value.trim()}\nTable : ${table}`;
         QRCode.toCanvas(message, { width: 200 }, function (err, canvas) {
           if (err) console.error(err);
           else qrcodeContainer.appendChild(canvas);
         });
       } else {
-        document.getElementById("resultat").textContent = "Nom non trouvé.";
-        document.getElementById("qrcode").innerHTML = "";
+        resultat.textContent = "Nom non trouvé. Veuillez vérifier l'orthographe.";
       }
     }
   </script>
