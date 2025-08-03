@@ -1,65 +1,53 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Plan de Table - Mariage Tchappi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mariage Tchappi - QR Invités</title>
   <style>
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      height: 100%;
       background: url('background.jpeg') no-repeat center center fixed;
       background-size: cover;
+      font-family: sans-serif;
       color: white;
-    }
-
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.6);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 40px 20px;
       text-align: center;
     }
 
     h1 {
-      font-size: 4rem;
-      font-weight: bold;
-      margin: 20px 0 40px;
-      text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+      font-size: 3em;
+      margin-top: 40px;
+      text-shadow: 2px 2px 4px #000;
     }
 
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
+    #search-container {
+      margin-top: 50px;
+      position: relative;
     }
 
-    #nom {
-      width: 300px;
-      max-width: 90%;
-      padding: 14px;
-      font-size: 1.1rem;
-      border-radius: 8px;
+    input[type="text"] {
+      padding: 15px;
+      font-size: 1.2em;
+      width: 80%;
+      max-width: 400px;
       border: none;
+      border-radius: 8px;
     }
 
     #suggestions {
+      position: absolute;
       background: white;
       color: black;
-      position: absolute;
-      z-index: 1000;
-      max-height: 200px;
-      overflow-y: auto;
-      width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      width: 80%;
+      max-width: 400px;
+      margin: 0 auto;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 10;
     }
 
     #suggestions div {
@@ -71,164 +59,73 @@
       background-color: #eee;
     }
 
-    button {
-      padding: 14px;
-      margin: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1.1rem;
-      background-color: #28a745;
-      color: white;
-      cursor: pointer;
-    }
-
-    #resultat {
-      margin-top: 25px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px black;
-    }
-
-    #qrcode {
-      margin-top: 20px;
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2.5rem;
-      }
-      h2 {
-        font-size: 1.3rem;
-      }
+    #qr {
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <h1>Bienvenue au Mariage de M. et Mme Tchappi</h1>
-    <h2>Entrez votre nom pour connaître votre table</h2>
-    <input type="text" id="nom" placeholder="Ex: Jean Dupont" autocomplete="off">
-<div id="suggestions" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; background: white; position: absolute; z-index: 10; display: none;"></div>
+  <h1>Bienvenue au Mariage de M et Mme Tchappi</h1>
+  <h2>Entrez votre nom pour connaître votre table</h2>
+  <div id="search-container">
+    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off" />
     <div id="suggestions"></div>
-    <button onclick="trouverTable()">Trouver ma table</button>
-    <div id="resultat"></div>
-    <div id="qrcode"></div>
   </div>
+  <div id="qr"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
     let invites = {};
-    let noms = [];
-
-    const inputNom = document.getElementById("nom");
-    const suggestionsDiv = document.getElementById("suggestions");
+    let nomsOriginaux = {};
 
     fetch('invites.csv')
       .then(response => response.text())
       .then(csvText => {
-        const data = Papa.parse(csvText, { header: true }).data;
-        data.forEach(row => {
-          if (row.Nom && row.Table) {
-            const nomNormal = row.Nom.trim();
-            const nomKey = nomNormal.toLowerCase();
-            invites[nomKey] = row.Table.trim();
-            noms.push(nomNormal);
+        Papa.parse(csvText, {
+          header: true,
+          skipEmptyLines: true,
+          complete: function(results) {
+            results.data.forEach(row => {
+              const nomKey = row.Nom.trim().toLowerCase();
+              invites[nomKey] = row.Table.trim();
+              nomsOriginaux[nomKey] = row.Nom.trim();
+            });
           }
         });
       });
 
-    inputNom.addEventListener("input", () => {
-      const val = inputNom.value.toLowerCase();
-      suggestionsDiv.innerHTML = "";
+    const nomInput = document.getElementById('nom');
+    const suggestionsDiv = document.getElementById('suggestions');
+    const qrDiv = document.getElementById('qr');
 
-      if (val.length > 0) {
-        const matches = noms.filter(n => n.toLowerCase().includes(val));
-        matches.slice(0, 10).forEach(nom => {
-          const div = document.createElement("div");
-          div.textContent = nom;
-          div.onclick = () => {
-            inputNom.value = nom;
-            suggestionsDiv.innerHTML = "";
-          };
-          suggestionsDiv.appendChild(div);
+    nomInput.addEventListener('input', function () {
+      const input = this.value.toLowerCase();
+      suggestionsDiv.innerHTML = '';
+      if (!input) return;
+
+      const matches = Object.keys(invites).filter(nom => nom.includes(input));
+      matches.forEach(match => {
+        const div = document.createElement('div');
+        div.textContent = nomsOriginaux[match];
+        div.addEventListener('click', function () {
+          nomInput.value = nomsOriginaux[match];
+          suggestionsDiv.innerHTML = '';
+          afficherQR(nomsOriginaux[match], invites[match]);
         });
-      }
+        suggestionsDiv.appendChild(div);
+      });
     });
 
-    document.addEventListener("click", (e) => {
-      if (e.target !== inputNom) {
-        suggestionsDiv.innerHTML = "";
-      }
-    });
-
-    function trouverTable() {
-      const nomSaisi = inputNom.value.trim();
-      const nomKey = nomSaisi.toLowerCase();
-      const table = invites[nomKey];
-
-      const resultat = document.getElementById("resultat");
-      const qrcodeContainer = document.getElementById("qrcode");
-      qrcodeContainer.innerHTML = "";
-
-      if (table !== undefined) {
-        resultat.textContent = `Vous êtes à la table : ${table}`;
-        const message = `Nom : ${nomSaisi}\nTable : ${table}`;
-        QRCode.toCanvas(message, { width: 200 }, function (err, canvas) {
-          if (!err) qrcodeContainer.appendChild(canvas);
-        });
-      } else {
-        resultat.textContent = "Nom non trouvé. Veuillez vérifier l'orthographe.";
-      }
+    function afficherQR(nom, table) {
+      qrDiv.innerHTML = '';
+      const qrContent = `Nom: ${nom}\nTable: ${table}`;
+      QRCode.toCanvas(document.createElement('canvas'), qrContent, { width: 200 }, function (err, canvas) {
+        if (!err) {
+          qrDiv.appendChild(canvas);
+        }
+      });
     }
   </script>
-
-<script>
-  const inputNom = document.getElementById("nom");
-  const suggestionsBox = document.getElementById("suggestions");
-
-  let invites = [];
-
-  fetch("invites.csv")
-    .then((res) => res.text())
-    .then((csv) => {
-      invites = csv
-        .split("
-")
-        .map((line) => line.split(",")[0].trim())
-        .filter((name) => name);
-    });
-
-  inputNom.addEventListener("input", () => {
-    const query = inputNom.value.toLowerCase();
-    const filtered = invites.filter(name =>
-      name.toLowerCase().includes(query)
-    );
-
-    suggestionsBox.innerHTML = "";
-    if (query && filtered.length) {
-      filtered.forEach(name => {
-        const div = document.createElement("div");
-        div.textContent = name;
-        div.style.padding = "4px 8px";
-        div.style.cursor = "pointer";
-        div.addEventListener("click", () => {
-          inputNom.value = name;
-          suggestionsBox.style.display = "none";
-          inputNom.dispatchEvent(new Event("input")); // pour déclencher le QR code
-        });
-        suggestionsBox.appendChild(div);
-      });
-      suggestionsBox.style.display = "block";
-    } else {
-      suggestionsBox.style.display = "none";
-    }
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!suggestionsBox.contains(e.target) && e.target !== inputNom) {
-      suggestionsBox.style.display = "none";
-    }
-  });
-</script>
-
 </body>
 </html>
