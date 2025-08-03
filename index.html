@@ -7,6 +7,10 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <style>
+    :root {
+      --terracotta: #E2725B;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
@@ -14,7 +18,7 @@
       height: 100%;
       background: url('background.jpeg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      color: var(--terracotta);
     }
 
     .overlay {
@@ -33,11 +37,13 @@
       font-weight: bold;
       margin: 20px 0 40px;
       text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
+      color: var(--terracotta);
     }
 
     h2 {
       font-size: 1.8rem;
       margin-bottom: 20px;
+      color: var(--terracotta);
     }
 
     .autocomplete-container {
@@ -74,7 +80,7 @@
     }
 
     #suggestions div:hover {
-      background-color: #eee;
+      background-color: #f8f0ed;
     }
 
     button {
@@ -83,7 +89,7 @@
       border-radius: 8px;
       border: none;
       font-size: 1.1rem;
-      background-color: #28a745;
+      background-color: var(--terracotta);
       color: white;
       cursor: pointer;
     }
@@ -93,6 +99,7 @@
       font-size: 1.5rem;
       font-weight: bold;
       text-shadow: 1px 1px 2px black;
+      color: var(--terracotta);
     }
 
     @media (max-width: 600px) {
@@ -160,23 +167,4 @@
 
     document.addEventListener("click", (e) => {
       if (e.target !== inputNom) {
-        suggestionsDiv.innerHTML = "";
-      }
-    });
-
-    function trouverTable() {
-      const nomSaisi = inputNom.value.trim();
-      const nomKey = nomSaisi.toLowerCase();
-      const table = invites[nomKey];
-
-      const resultat = document.getElementById("resultat");
-
-      if (table !== undefined) {
-        resultat.textContent = `Vous êtes à la table : ${table}`;
-      } else {
-        resultat.textContent = "Nom non trouvé. Veuillez vérifier l'orthographe.";
-      }
-    }
-  </script>
-</body>
-</html>
+        suggest
