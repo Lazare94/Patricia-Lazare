@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Plan de Table - Mariage Tchappi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
   <style>
     html, body {
@@ -89,10 +88,6 @@
       text-shadow: 1px 1px 2px black;
     }
 
-    #qrcode {
-      margin-top: 20px;
-    }
-
     @media (max-width: 600px) {
       h1 {
         font-size: 2.5rem;
@@ -106,12 +101,11 @@
 <body>
   <div class="overlay">
     <h1>Bienvenue au Mariage de M et Mme Tchappi</h1>
-    <h2>Entrez votre nom ou votre prenom pour connaître votre table</h2>
-    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off">
+    <h2>Entrez votre nom ou prénom pour connaître votre table</h2>
+    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off" />
     <div id="suggestions"></div>
     <button onclick="trouverTable()">Trouver ma table</button>
     <div id="resultat"></div>
-    <div id="qrcode"></div>
   </div>
 
   <script>
@@ -121,11 +115,11 @@
     const inputNom = document.getElementById("nom");
     const suggestionsDiv = document.getElementById("suggestions");
 
-    fetch('invites.csv')
-      .then(response => response.text())
-      .then(csvText => {
+    fetch("invites.csv")
+      .then((response) => response.text())
+      .then((csvText) => {
         const data = Papa.parse(csvText, { header: true }).data;
-        data.forEach(row => {
+        data.forEach((row) => {
           if (row.Nom && row.Table) {
             const nomNormal = row.Nom.trim();
             const nomKey = nomNormal.toLowerCase();
@@ -140,8 +134,8 @@
       suggestionsDiv.innerHTML = "";
 
       if (val.length > 0) {
-        const matches = noms.filter(n => n.toLowerCase().includes(val));
-        matches.slice(0, 10).forEach(nom => {
+        const matches = noms.filter((n) => n.toLowerCase().includes(val));
+        matches.slice(0, 10).forEach((nom) => {
           const div = document.createElement("div");
           div.textContent = nom;
           div.onclick = () => {
@@ -165,19 +159,6 @@
       const table = invites[nomKey];
 
       const resultat = document.getElementById("resultat");
-      const qrcodeContainer = document.getElementById("qrcode");
-      qrcodeContainer.innerHTML = "";
 
       if (table !== undefined) {
-        resultat.textContent = `Vous êtes à la table : ${table}`;
-        const message = `Nom : ${nomSaisi}\nTable : ${table}`;
-        QRCode.toCanvas(message, { width: 200 }, function (err, canvas) {
-          if (!err) qrcodeContainer.appendChild(canvas);
-        });
-      } else {
-        resultat.textContent = "Nom non trouvé. Veuillez vérifier l'orthographe.";
-      }
-    }
-  </script>
-</body>
-</html>
+        resultat.textContent = `Vous ête
