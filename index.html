@@ -108,6 +108,7 @@
     <h1>Bienvenue au Mariage de M. et Mme Tchappi</h1>
     <h2>Entrez votre nom pour connaître votre table</h2>
     <input type="text" id="nom" placeholder="Ex: Jean Dupont" autocomplete="off">
+<div id="suggestions" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; background: white; position: absolute; z-index: 10; display: none;"></div>
     <div id="suggestions"></div>
     <button onclick="trouverTable()">Trouver ma table</button>
     <div id="resultat"></div>
@@ -179,5 +180,55 @@
       }
     }
   </script>
+
+<script>
+  const inputNom = document.getElementById("nom");
+  const suggestionsBox = document.getElementById("suggestions");
+
+  let invites = [];
+
+  fetch("invites.csv")
+    .then((res) => res.text())
+    .then((csv) => {
+      invites = csv
+        .split("
+")
+        .map((line) => line.split(",")[0].trim())
+        .filter((name) => name);
+    });
+
+  inputNom.addEventListener("input", () => {
+    const query = inputNom.value.toLowerCase();
+    const filtered = invites.filter(name =>
+      name.toLowerCase().includes(query)
+    );
+
+    suggestionsBox.innerHTML = "";
+    if (query && filtered.length) {
+      filtered.forEach(name => {
+        const div = document.createElement("div");
+        div.textContent = name;
+        div.style.padding = "4px 8px";
+        div.style.cursor = "pointer";
+        div.addEventListener("click", () => {
+          inputNom.value = name;
+          suggestionsBox.style.display = "none";
+          inputNom.dispatchEvent(new Event("input")); // pour déclencher le QR code
+        });
+        suggestionsBox.appendChild(div);
+      });
+      suggestionsBox.style.display = "block";
+    } else {
+      suggestionsBox.style.display = "none";
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!suggestionsBox.contains(e.target) && e.target !== inputNom) {
+      suggestionsBox.style.display = "none";
+    }
+  });
+</script>
+
 </body>
 </html>
