@@ -7,10 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <style>
-    :root {
-      --terracotta: #E2725B;
-    }
-
     html, body {
       margin: 0;
       padding: 0;
@@ -18,7 +14,7 @@
       height: 100%;
       background: url('background.jpeg') no-repeat center center fixed;
       background-size: cover;
-      color: var(--terracotta);
+      color: white;
     }
 
     .overlay {
@@ -37,42 +33,39 @@
       font-weight: bold;
       margin: 20px 0 40px;
       text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
-      color: var(--terracotta);
     }
 
     h2 {
       font-size: 1.8rem;
       margin-bottom: 20px;
-      color: var(--terracotta);
+    }
+
+    .autocomplete-container {
+      position: relative;
+      width: 300px;
+      max-width: 90%;
     }
 
     #nom {
-      width: 300px;
-      max-width: 90%;
+      width: 100%;
       padding: 14px;
       font-size: 1.1rem;
       border-radius: 8px;
-      border: 2px solid var(--terracotta);
-      background-color: #fff7f5;
-      color: var(--terracotta);
-      outline: none;
-    }
-
-    #nom::placeholder {
-      color: var(--terracotta);
-      opacity: 0.6;
+      border: none;
     }
 
     #suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
       background: white;
       color: black;
-      position: absolute;
-      z-index: 1000;
+      border: 1px solid #ccc;
+      border-radius: 0 0 5px 5px;
+      z-index: 10;
       max-height: 200px;
       overflow-y: auto;
-      width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
     }
 
     #suggestions div {
@@ -90,7 +83,7 @@
       border-radius: 8px;
       border: none;
       font-size: 1.1rem;
-      background-color: var(--terracotta);
+      background-color: #28a745;
       color: white;
       cursor: pointer;
     }
@@ -100,7 +93,6 @@
       font-size: 1.5rem;
       font-weight: bold;
       text-shadow: 1px 1px 2px black;
-      color: var(--terracotta);
     }
 
     @media (max-width: 600px) {
@@ -115,10 +107,14 @@
 </head>
 <body>
   <div class="overlay">
-    <h1>Bienvenue au mariage de M. et Mme Tchappi</h1>
-    <h2>Entrez votre prenom ou nom pour connaître votre table</h2>
-    <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off">
-    <div id="suggestions"></div>
+    <h1>Bienvenue au Mariage de M et Mme Tchappi</h1>
+    <h2>Entrez votre nom ou votre prénom pour connaître votre table</h2>
+    
+    <div class="autocomplete-container">
+      <input type="text" id="nom" placeholder="Ex: Lazare Tchappi" autocomplete="off">
+      <div id="suggestions"></div>
+    </div>
+
     <button onclick="trouverTable()">Trouver ma table</button>
     <div id="resultat"></div>
   </div>
