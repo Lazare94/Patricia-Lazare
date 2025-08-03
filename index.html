@@ -7,10 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <style>
-    :root {
-      --terracotta: #E2725B;
-    }
-
     html, body {
       margin: 0;
       padding: 0;
@@ -18,7 +14,7 @@
       height: 100%;
       background: url('background.jpeg') no-repeat center center fixed;
       background-size: cover;
-      color: var(--terracotta);
+      color: #E2725B; /* Terracotta */
     }
 
     .overlay {
@@ -37,13 +33,13 @@
       font-weight: bold;
       margin: 20px 0 40px;
       text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
-      color: var(--terracotta);
+      color: #E2725B;
     }
 
     h2 {
       font-size: 1.8rem;
       margin-bottom: 20px;
-      color: var(--terracotta);
+      color: #E2725B;
     }
 
     .autocomplete-container {
@@ -66,8 +62,9 @@
       left: 0;
       width: 100%;
       background: white;
-      color: black;
+      color: #E2725B;
       border: 1px solid #ccc;
+      border-top: none;
       border-radius: 0 0 5px 5px;
       z-index: 10;
       max-height: 200px;
@@ -80,16 +77,16 @@
     }
 
     #suggestions div:hover {
-      background-color: #f8f0ed;
+      background-color: #f1e0dc;
     }
 
     button {
       padding: 14px;
-      margin: 10px;
+      margin: 20px 0;
       border-radius: 8px;
       border: none;
       font-size: 1.1rem;
-      background-color: var(--terracotta);
+      background-color: #E2725B;
       color: white;
       cursor: pointer;
     }
@@ -99,7 +96,7 @@
       font-size: 1.5rem;
       font-weight: bold;
       text-shadow: 1px 1px 2px black;
-      color: var(--terracotta);
+      color: #E2725B;
     }
 
     @media (max-width: 600px) {
@@ -141,30 +138,4 @@
           if (row.Nom && row.Table) {
             const nomNormal = row.Nom.trim();
             const nomKey = nomNormal.toLowerCase();
-            invites[nomKey] = row.Table.trim();
-            noms.push(nomNormal);
-          }
-        });
-      });
-
-    inputNom.addEventListener("input", () => {
-      const val = inputNom.value.toLowerCase();
-      suggestionsDiv.innerHTML = "";
-
-      if (val.length > 0) {
-        const matches = noms.filter(n => n.toLowerCase().includes(val));
-        matches.slice(0, 10).forEach(nom => {
-          const div = document.createElement("div");
-          div.textContent = nom;
-          div.onclick = () => {
-            inputNom.value = nom;
-            suggestionsDiv.innerHTML = "";
-          };
-          suggestionsDiv.appendChild(div);
-        });
-      }
-    });
-
-    document.addEventListener("click", (e) => {
-      if (e.target !== inputNom) {
-        suggest
+            invites[nomKey] = row.Tab
