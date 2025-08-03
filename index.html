@@ -41,7 +41,7 @@
       margin-bottom: 20px;
     }
 
-    #nom {
+    input[type="text"] {
       width: 300px;
       max-width: 90%;
       padding: 14px;
@@ -50,25 +50,9 @@
       border: none;
     }
 
-    #suggestions {
-      background: white;
-      color: black;
-      position: absolute;
-      z-index: 1000;
+    datalist {
       max-height: 200px;
       overflow-y: auto;
-      width: 300px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    #suggestions div {
-      padding: 10px;
-      cursor: pointer;
-    }
-
-    #suggestions div:hover {
-      background-color: #eee;
     }
 
     button {
@@ -107,8 +91,8 @@
   <div class="overlay">
     <h1>Bienvenue au Mariage de M. et Mme Tchappi</h1>
     <h2>Entrez votre nom pour connaître votre table</h2>
-    <input type="text" id="nom" placeholder="Ex: Jean Dupont" autocomplete="off">
-    <div id="suggestions"></div>
+    <input type="text" id="nom" list="listeNoms" placeholder="Ex: Jean Dupont" autocomplete="off">
+    <datalist id="listeNoms"></datalist>
     <button onclick="trouverTable()">Trouver ma table</button>
     <div id="resultat"></div>
     <div id="qrcode"></div>
@@ -119,7 +103,7 @@
     let noms = [];
 
     const inputNom = document.getElementById("nom");
-    const suggestionsDiv = document.getElementById("suggestions");
+    const datalist = document.getElementById("listeNoms");
 
     fetch('invites.csv')
       .then(response => response.text())
@@ -131,33 +115,13 @@
             const nomKey = nomNormal.toLowerCase();
             invites[nomKey] = row.Table.trim();
             noms.push(nomNormal);
+
+            const option = document.createElement("option");
+            option.value = nomNormal;
+            datalist.appendChild(option);
           }
         });
       });
-
-    inputNom.addEventListener("input", () => {
-      const val = inputNom.value.toLowerCase();
-      suggestionsDiv.innerHTML = "";
-
-      if (val.length > 0) {
-        const matches = noms.filter(n => n.toLowerCase().includes(val));
-        matches.slice(0, 10).forEach(nom => {
-          const div = document.createElement("div");
-          div.textContent = nom;
-          div.onclick = () => {
-            inputNom.value = nom;
-            suggestionsDiv.innerHTML = "";
-          };
-          suggestionsDiv.appendChild(div);
-        });
-      }
-    });
-
-    document.addEventListener("click", (e) => {
-      if (e.target !== inputNom) {
-        suggestionsDiv.innerHTML = "";
-      }
-    });
 
     function trouverTable() {
       const nomSaisi = inputNom.value.trim();
